@@ -2,7 +2,9 @@ import cv2
 import os
 import tensorflow as tf
 import preprocessor
-
+tf.compat.v1.disable_eager_execution()
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 def main():
     print ('OpenCV version {} '.format(cv2.__version__))
 
@@ -33,7 +35,7 @@ def main():
     sgd(training_data, training_labels, test_data, test_labels)
 
 # Softmax Regression Model
-def regression(X):
+def regression(x):
     W = tf.Variable(tf.zeros([901, 2]), name="W")
     b = tf.Variable(tf.zeros([2]), name="b")
     y = tf.nn.softmax(tf.matmul(x, W) + b)
@@ -47,7 +49,7 @@ def sgd(training_data, training_labels, test_data, test_labels):
 
     # train
     y_ = tf.placeholder("float", [None, 2])
-    cross_entropy = -tf.reduce_sum(y_ * tf.log(y))
+    cross_entropy = -tf.reduce_sum(y_ * tf.math.log(y))
     train_step = tf.train.GradientDescentOptimizer(0.01).minimize(cross_entropy)
     correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
