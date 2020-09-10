@@ -3,24 +3,26 @@ import numpy as np
 
 
 def prepare(input):
-    #preparing the image input
+    # preprocessing the image input
     clean = cv2.fastNlMeansDenoising(input)
-    ret,tresh = cv2.threshold(clean,127,1,cv2.THRESH_BINARY_INV)
-    img = crop(tresh )
+    ret, tresh = cv2.threshold(clean, 127, 1, cv2.THRESH_BINARY_INV)
+    img = crop(tresh)
 
-    # 40*400 image as a flatten array
+    # 40x10 image as a flatten array
     flatten_img = cv2.resize(img, (40, 10), interpolation=cv2.INTER_AREA).flatten()
 
-    # resize to 400*100
-    resized = cv2.resize(img,(400*100),interpolation=cv2.INTER_AREA)
-    columns = np.sum(resized,axis=0) # sum of all columns
-    lines = np.sum(resized,axis=1) # sum of all lines
+    # resize to 400x100
+    resized = cv2.resize(img, (400, 100), interpolation=cv2.INTER_AREA)
+    columns = np.sum(resized, axis=0)  # sum of all columns
+    lines = np.sum(resized, axis=1)  # sum of all lines
 
-    h,w = img.shape
-    aspect = w/h
-    return  [*flatten_img, *columns, *lines, aspect]
+    h, w = img.shape
+    aspect = w / h
+
+    return [*flatten_img, *columns, *lines, aspect]
+
 
 def crop(img):
     points = cv2.findNonZero(img)
-    x,y,w,h = cv2.boundingRect(points)
-    return img[y:y+h,x:x+w]
+    x, y, w, h = cv2.boundingRect(points)
+    return img[y: y+h, x: x+w]
